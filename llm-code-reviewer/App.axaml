@@ -68,8 +68,8 @@
 
           <Style Selector="TextBox:pointerover">
               <Setter Property="Background" Value="#A9B7C6"/>  
-              <Setter Property="BorderBrush" Value="#2A79CC"/>
-              <Setter Property="Foreground" Value="#2A79CC"/>
+              <Setter Property="BorderBrush" Value="#3C3F41"/>
+              <Setter Property="Foreground" Value="#3C3F41"/>
           </Style>
           
           <Style Selector="TextBox:focus">

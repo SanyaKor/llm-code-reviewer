@@ -4,8 +4,8 @@
         x:Class="LLMCodeReviewer.MainWindow"
         x:DataType="vm:MainViewModel"
         Title="llm-code-reviewer"
-        Width="500"
-        Height="240"
+        Width="800"
+        Height="600"
         MinWidth="500"
         MinHeight="240"
         Background="#2b2d30">
@@ -13,8 +13,7 @@
     
     
     <Grid ColumnDefinitions="*, *, *, 0.5*" RowDefinitions="Auto, 8*, 3*" Margin="16 0 16 0">
-            
-
+        
                 
                 
                 <ComboBox Grid.Column="0"
@@ -76,14 +75,27 @@
                          Grid.Row="2"
                          Grid.ColumnSpan="4"
                          x:Name="InputBox"
-                         AcceptsReturn="False"
+                         AcceptsReturn="True"
                          TextWrapping="Wrap"
                          FontSize="16"
                          Watermark="Нижний TextBox (RowSpan=1)"
                          Margin="0,0,0,16"
                          HorizontalAlignment="Stretch"
-                         VerticalAlignment="Stretch"
-                         KeyDown="OnInputKeyDown"/>
+                         VerticalAlignment="Stretch"/>
+                
+                <Button Grid.Column="3"
+                        Grid.Row="2"
+                        Content=""
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,4,4,0"
+                        Background="#3C3F41"
+                        Foreground="White"
+                        BorderBrush="Transparent"
+                        Cursor="Hand"
+                        Click="OnSendPromptClick"/>
         </Grid>
 </Window>
 

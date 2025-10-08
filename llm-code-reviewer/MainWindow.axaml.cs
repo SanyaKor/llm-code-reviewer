@@ -6,10 +6,16 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Layout;
+using System.Text.RegularExpressions;
 
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using AvaloniaEdit;
+using AvaloniaEdit.Highlighting;
+using Avalonia.VisualTree;
 
+using System.Linq;
+using System.Net.Mime;
 
 namespace LLMCodeReviewer
 {
@@ -18,6 +24,8 @@ namespace LLMCodeReviewer
         private readonly MainViewModel _vm;
         private Button _saveButton;
         public LLM llm;
+        
+        private TextBox _inputBox;
         
         private Border? _typingIndicator;
         private bool _isTyping = false;
@@ -28,36 +36,82 @@ namespace LLMCodeReviewer
             llm = new LLM("gpt-5");
             _vm = MainViewModel.Load();
             DataContext = _vm;
+            _inputBox = InputBox;
+
         }
         
-        private async void OnInputKeyDown(object? sender, KeyEventArgs e)
+        private async void OnSendPromptClick(object? sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter && sender is TextBox input && !string.IsNullOrWhiteSpace(input.Text))
-            {
-                var bubble = new Border
-                {
-                    Background = new SolidColorBrush(Color.Parse("#2A2B2E")),
-                    CornerRadius = new CornerRadius(12),
-                    Padding = new Thickness(10),
-                    Margin = new Thickness(100, 4, 0, 4),
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Child = new TextBlock
-                    {
-                        Text = input.Text,
-                        FontSize = 16,
-                        Foreground = new SolidColorBrush(Color.Parse("#A9B7C6")),
-                        TextWrapping = TextWrapping.Wrap,
-                    }
-                };
+            
+            if (string.IsNullOrWhiteSpace(_inputBox.Text))
+                return;
 
-                MessagesPanel.Children.Add(bubble);
-                ShowTypingIndicator();
-                input.Clear();
-                
-                var response = await llm.AskAsync("Whats the weather rn in berlin?");
-                HideTypingIndicator();
-                __AddMessage(response, fromUser: false);
-            }
+            string messageText = _inputBox.Text;
+
+            var bubble = new Border
+            {
+                Background = new SolidColorBrush(Color.Parse("#2A2B2E")),
+                CornerRadius = new CornerRadius(12),
+                Padding = new Thickness(10),
+                Margin = new Thickness(100, 4, 0, 4),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Child = new TextBlock
+                {
+                    Text = messageText,
+                    FontSize = 16,
+                    Foreground = new SolidColorBrush(Color.Parse("#A9B7C6")),
+                    TextWrapping = TextWrapping.Wrap,
+                }
+            };
+            
+            MessagesPanel.Children.Add(bubble);
+            ShowTypingIndicator();
+            _inputBox.Clear();
+            
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (MessagesPanel.Parent is ScrollViewer scroll)
+                {
+                    scroll.ScrollToEnd();
+                }
+                _inputBox.Focus();
+            }, DispatcherPriority.Render);
+            
+            var response = await llm.AskAsync(messageText);
+            HideTypingIndicator();
+            
+            var replyBubble = new Border
+            {
+                Background = new SolidColorBrush(Color.Parse("#3C3F41")),
+                CornerRadius = new CornerRadius(12),
+                Padding = new Thickness(10),
+                Margin = new Thickness(0, 4, 80, 4),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Child = new TextBox
+                {
+                    Text = response,
+                    FontSize = 16,
+                    Foreground = new SolidColorBrush(Color.Parse("#A9B7C6")),
+                    Background = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    IsReadOnly = true,
+                    AcceptsReturn = true,
+                    TextWrapping = TextWrapping.Wrap,
+                    IsTabStop = false,
+                    Cursor = new Cursor(StandardCursorType.Ibeam) 
+                }
+            };
+
+            MessagesPanel.Children.Add(replyBubble);
+            
+            Dispatcher.UIThread.Post(() =>
+            {
+                if (MessagesPanel.Parent is ScrollViewer scroll)
+                {
+                    scroll.ScrollToEnd();
+                }
+            }, DispatcherPriority.Background);
+        
         }
         private void OnSaveClick(object? sender, RoutedEventArgs e)
         {
@@ -75,7 +129,6 @@ namespace LLMCodeReviewer
             _vm.Save();
             base.OnClosed(e);
         }
-        
         
         private void __AddMessage(string text, bool fromUser)
         {
@@ -107,7 +160,7 @@ namespace LLMCodeReviewer
 
             var label = new TextBlock
             {
-                Text = "🤖 ИИ печатает",
+                Text = "Waiting for response",
                 Foreground = new SolidColorBrush(Color.Parse("#8F9BA8")),
                 FontStyle = FontStyle.Italic
             };
@@ -129,7 +182,7 @@ namespace LLMCodeReviewer
                 while (_isTyping)
                 {
                     await Dispatcher.UIThread.InvokeAsync(() =>
-                        label.Text = "Waiting for response" + new string('.', (i % 3) + 1));
+                        label.Text = "Waiting for AI response" + new string('.', (i % 3) + 1));
                     i++;
                     await Task.Delay(400);
                 }
@@ -148,5 +201,7 @@ namespace LLMCodeReviewer
             }
         }
         
+        
+
     }
 }
