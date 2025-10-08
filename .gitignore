@@ -1,5 +1,124 @@
-bin/
-obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Tt]emp/
+[Tt]empBuild/
+
+# Avalonia generated files
+*.axaml.g.cs
+*.xaml.g.cs
+*.g.i.cs
+*.axaml.cs~*
+*.axaml~
+*.xaml~
+*.resources
+
+# Avalonia Designer cache
+*.designer.cs
+*.designer.axaml
+*.designer.axaml.cs
+*.designer.*
+.avalonia/
+.avalonia-build/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# IDE specific
+.vs/
+.idea/
+.vscode/
+
+# JetBrains Rider / ReSharper
+*.DotSettings.user
+.idea/
+resharper-host/
+_ReSharper.Caches/
+_ReSharper.*/
+*.sln.iml
+
+# VS Code
+.history/
+.vscode/*
+
+# macOS / Linux system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Icon?
+__MACOSX/
+
+# Windows thumbnail cache files
+Thumbs.db
+ehthumbs.db
+
+# Compiled binary files
+*.dll
+*.exe
+*.app
+*.app.dSYM/
+*.pdb
+*.mdb
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.assets.json
+.nuget/
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Avalonia Resources Cache
+AvaloniaResources.cache
+AvaloniaResourceManifest.json
+
+# Publish output
+publish/
+dist/
+out/
+Release/
+Debug/
+artifacts/
+
+# Test results
+TestResults/
+*.VisualState.xml
+*.coverage
+*.coveragexml
+
+# Rider / VS caches
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swm
+*.swo
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*~
+*.orig
+
+# Optional: generated docs
+docs/_site/
+docs/build/
+
+# Avalonia previewer logs
+Avalonia.DesignerHost.*
+*.avaloniapreviewer.log
