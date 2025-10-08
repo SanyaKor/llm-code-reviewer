@@ -6,7 +6,7 @@ using System;
 
 
 
-namespace AvaloniaApplication1
+namespace LLMCodeReviewer
 {
     public class MainViewModel : INotifyPropertyChanged
     {
