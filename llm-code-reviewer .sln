@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaApplication1", "AvaloniaApplication1\AvaloniaApplication1.csproj", "{EDA1D684-6CDB-491B-BF87-34584D5B44FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "llm-code-reviewer", "llm-code-reviewer\llm-code-reviewer.csproj", "{EDA1D684-6CDB-491B-BF87-34584D5B44FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
