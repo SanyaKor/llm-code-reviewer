@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvaloniaApplication1", "AvaloniaApplication1\AvaloniaApplication1.csproj", "{EDA1D684-6CDB-491B-BF87-34584D5B44FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EDA1D684-6CDB-491B-BF87-34584D5B44FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDA1D684-6CDB-491B-BF87-34584D5B44FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDA1D684-6CDB-491B-BF87-34584D5B44FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDA1D684-6CDB-491B-BF87-34584D5B44FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

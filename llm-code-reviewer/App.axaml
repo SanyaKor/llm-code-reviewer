@@ -1,0 +1,122 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:fluent="avares://Avalonia.Themes.Fluent"
+             x:Class="AvaloniaApplication1.App"
+             RequestedThemeVariant="Dark">
+
+  
+  
+      <Application.Resources>
+          <Color x:Key="Color.Panel">#3C3F41</Color>
+          <Color x:Key="Color.Background">#2B2B2B</Color>
+          <Color x:Key="Color.Border">#555555</Color>
+          <Color x:Key="Color.BorderWeak">#4B4B4B</Color>
+          <Color x:Key="Color.BorderStrong">#707070</Color>
+
+          <Color x:Key="Color.Text">#A9B7C6</Color>
+          <Color x:Key="Color.TextWeak">#8A949E</Color>
+          <Color x:Key="Color.Placeholder">#808080</Color>
+
+          <Color x:Key="Color.Accent">#409EFF</Color>
+          <Color x:Key="Color.AccentHover">#5AAEFD</Color>
+          <Color x:Key="Color.AccentPressed">#2A79CC</Color>
+
+          <Color x:Key="Color.ButtonBg">#3C3F41</Color>
+          <Color x:Key="Color.ButtonBgHover">#4E5052</Color>
+          <Color x:Key="Color.ButtonBgPressed">#2E2E2E</Color>
+
+          <Color x:Key="Color.SelectionBg">#334AAFFF</Color>
+          <Color x:Key="Color.SelectionFg">#FFFFFF</Color>
+
+          <!-- Кисти -->
+          <SolidColorBrush x:Key="Brush.WindowBg" Color="{StaticResource Color.Background}"/>
+          <SolidColorBrush x:Key="Brush.PanelBg" Color="{StaticResource Color.Panel}"/>
+          <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Border}"/>
+          <SolidColorBrush x:Key="Brush.BorderWeak" Color="{StaticResource Color.BorderWeak}"/>
+          <SolidColorBrush x:Key="Brush.BorderStrong" Color="{StaticResource Color.BorderStrong}"/>
+
+          <SolidColorBrush x:Key="Brush.Text" Color="{StaticResource Color.Text}"/>
+          <SolidColorBrush x:Key="Brush.TextWeak" Color="{StaticResource Color.TextWeak}"/>
+          <SolidColorBrush x:Key="Brush.Placeholder" Color="{StaticResource Color.Placeholder}"/>
+
+          <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
+          <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.AccentHover}"/>
+          <SolidColorBrush x:Key="Brush.AccentPressed" Color="{StaticResource Color.AccentPressed}"/>
+
+          <SolidColorBrush x:Key="Brush.ButtonBg" Color="{StaticResource Color.ButtonBg}"/>
+          <SolidColorBrush x:Key="Brush.ButtonBgHover" Color="{StaticResource Color.ButtonBgHover}"/>
+          <SolidColorBrush x:Key="Brush.ButtonBgPressed" Color="{StaticResource Color.ButtonBgPressed}"/>
+
+          <SolidColorBrush x:Key="Brush.SelectionBg" Color="{StaticResource Color.SelectionBg}"/>
+          <SolidColorBrush x:Key="Brush.SelectionFg" Color="{StaticResource Color.SelectionFg}"/>
+      </Application.Resources>
+
+      <Application.Styles>
+          <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
+          <Style Selector="Window">
+              <Setter Property="Background" Value="{StaticResource Brush.WindowBg}"/>
+              <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
+              <Setter Property="FontSize" Value="14"/>
+          </Style>
+          
+          <!-- TEXTBOX -->
+          <Style Selector="TextBox">
+              <Setter Property="Background" Value="#191A1D"/>
+              <Setter Property="BorderBrush" Value="#3C3F41"/>
+              <Setter Property="Foreground" Value="#3C3F41"/>
+          </Style>
+
+          <Style Selector="TextBox:pointerover">
+              <Setter Property="Background" Value="#A9B7C6"/>  
+              <Setter Property="BorderBrush" Value="#2A79CC"/>
+              <Setter Property="Foreground" Value="#2A79CC"/>
+          </Style>
+          
+          <Style Selector="TextBox:focus">
+              <Setter Property="Foreground" Value="#A9B7C6"/>
+          </Style>
+          
+          <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+                <Setter Property="Background">
+                    <SolidColorBrush Color="#191A1D"/>
+                </Setter>
+                <Setter Property="BorderBrush">
+                    <SolidColorBrush Color="#A9B7C6"/>
+                </Setter>
+          </Style>
+          
+          <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+                <Setter Property="Background">
+                    <SolidColorBrush Color="#191A1D"/>
+                </Setter>
+                <Setter Property="BorderBrush">
+                    <SolidColorBrush Color="#A9B7C6"/>
+                </Setter>
+          </Style>
+ 
+      <!-- ComboBox -->
+          <Style Selector="ComboBox">
+              <Setter Property="Background" Value="#191A1D"/>
+              <Setter Property="Foreground" Value="#A9B7C6"/>
+              <Setter Property="BorderBrush" Value="Transparent"/>
+          </Style>
+          
+          <!--<Style Selector="ComboBox:pointerover">
+              <Setter Property="Background" Value="#191A1D"/>
+              <Setter Property="Foreground" Value="#A9B7C6"/>
+              <Setter Property="BorderBrush" Value="#3C3F41"/>
+          </Style>-->
+      
+          <Style Selector="ComboBox:pointerover /template/ Border#border">
+              <Setter Property="Background" Value="#409EFF"/>
+              <Setter Property="BorderBrush" Value="#409EFF"/>
+          </Style>
+
+          <Style Selector="ComboBox:focus /template/ Border#border">
+              <Setter Property="BorderBrush" Value="#409EFF"/>
+          </Style>
+      
+
+    
+  </Application.Styles>
+</Application>
