@@ -1,45 +1,62 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System;             
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Layout;
-using System.Text.RegularExpressions;
 
 using System.Threading.Tasks;
 using Avalonia.Threading;
-using AvaloniaEdit;
-using AvaloniaEdit.Highlighting;
-using Avalonia.VisualTree;
 
-using System.Linq;
-using System.Net.Mime;
+
 
 namespace LLMCodeReviewer
 {
     public partial class MainWindow : Window
     {
-        private readonly MainViewModel _vm;
         private Button _saveButton;
-        public LLM llm;
+        private LLM _llm;
         
         private TextBox _inputBox;
         
         private Border? _typingIndicator;
+        private int _lastValidIndex = 0;
+
         private bool _isTyping = false;
+        
+        private List<Prompt> _prompts = new();
+        private List<string> _comboItems = new();
         
         public MainWindow()
         {
             InitializeComponent();
-            llm = new LLM("gpt-5");
-            _vm = MainViewModel.Load();
-            DataContext = _vm;
+            LoadPromptsFromFile();
+            _llm = new LLM("gpt-5");
             _inputBox = InputBox;
-
+            
         }
         
+        
+        private void LoadPromptsFromFile()
+        {
+            _prompts = PromptStorage.LoadPrompts();
+
+            _comboItems = _prompts.Select(p => p.Title).ToList();
+            _comboItems.Add("Edit config...");
+
+            PromptList.ItemsSource = _comboItems;
+            PromptList.SelectedIndex = 0;
+
+            PromptList.ContainerPrepared += (_, args) =>
+            {
+                if (args.Container.DataContext?.ToString() == "Edit config...")
+                    args.Container.Classes.Add("edit-item");
+            };
+        }
+
         private async void OnSendPromptClick(object? sender, RoutedEventArgs e)
         {
             
@@ -77,7 +94,7 @@ namespace LLMCodeReviewer
                 _inputBox.Focus();
             }, DispatcherPriority.Render);
             
-            var response = await llm.AskAsync(messageText);
+            var response = await _llm.AskAsync(messageText);
             HideTypingIndicator();
             
             var replyBubble = new Border
@@ -111,23 +128,6 @@ namespace LLMCodeReviewer
                     scroll.ScrollToEnd();
                 }
             }, DispatcherPriority.Background);
-        
-        }
-        private void OnSaveClick(object? sender, RoutedEventArgs e)
-        {
-            _vm.Save();
-        }
-        
-        private void OnRestoreClick(object? sender, RoutedEventArgs e)
-        {
-            _vm.Restore();
-        }
-
-
-        protected override void OnClosed(EventArgs e)
-        {
-            _vm.Save();
-            base.OnClosed(e);
         }
         
         private void __AddMessage(string text, bool fromUser)
@@ -200,6 +200,49 @@ namespace LLMCodeReviewer
                 _typingIndicator = null;
             }
         }
+        
+        private void OnDropDownSelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            
+            if (sender is not ComboBox cb) return;
+            
+            if (cb.SelectedItem is not string value) return;
+
+            if (value == "Edit config..." || value == "Edit configs…")
+            {
+                cb.SelectedIndex = 0;          
+                OpenConfigsEditor();
+            }
+        }
+
+        private void OpenConfigsEditor()
+        {
+            var window = new PromptConfig(_prompts, onChanged: () =>
+            {
+                PromptStorage.SavePrompts(_prompts);
+                RefreshComboFromPrompts();
+            });
+            window.Show();
+        }
+        
+        private void RefreshComboFromPrompts()
+        {
+            var titles = _prompts.Select(p => p.Title).ToList();
+            titles.Add("Edit config...");
+
+            PromptList.ItemsSource = null;
+            PromptList.Items.Clear();
+            PromptList.ItemsSource = titles;
+
+            PromptList.SelectedIndex = titles.Count > 1 ? 0 : -1;
+
+            PromptList.ContainerPrepared += (_, a) =>
+            {
+                if (a.Container.DataContext?.ToString() == "Edit config...")
+                    a.Container.Classes.Add("edit-item");
+            };
+        }
+
         
         
 

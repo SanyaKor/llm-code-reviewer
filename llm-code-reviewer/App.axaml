@@ -7,6 +7,9 @@
   
   
       <Application.Resources>
+          <Geometry x:Key="Icon.Send">
+              M2 21 L23 12 L2 3 L2 9 L15 12 L2 15 Z
+          </Geometry>
           <Color x:Key="Color.Panel">#3C3F41</Color>
           <Color x:Key="Color.Background">#2B2B2B</Color>
           <Color x:Key="Color.Border">#555555</Color>
@@ -28,7 +31,6 @@
           <Color x:Key="Color.SelectionBg">#334AAFFF</Color>
           <Color x:Key="Color.SelectionFg">#FFFFFF</Color>
 
-          <!-- Кисти -->
           <SolidColorBrush x:Key="Brush.WindowBg" Color="{StaticResource Color.Background}"/>
           <SolidColorBrush x:Key="Brush.PanelBg" Color="{StaticResource Color.Panel}"/>
           <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Border}"/>
@@ -53,6 +55,7 @@
 
       <Application.Styles>
           <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
+          
           <Style Selector="Window">
               <Setter Property="Background" Value="{StaticResource Brush.WindowBg}"/>
               <Setter Property="Foreground" Value="{StaticResource Brush.Text}"/>
@@ -115,8 +118,7 @@
           <Style Selector="ComboBox:focus /template/ Border#border">
               <Setter Property="BorderBrush" Value="#409EFF"/>
           </Style>
-      
-
-    
+          
   </Application.Styles>
+    
 </Application>

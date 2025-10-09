@@ -1,8 +1,9 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:fa="using:FluentAvalonia.UI.Controls"
+        xmlns:shapes="using:Avalonia.Controls.Shapes"
         xmlns:vm="clr-namespace:LLMCodeReviewer"
         x:Class="LLMCodeReviewer.MainWindow"
-        x:DataType="vm:MainViewModel"
         Title="llm-code-reviewer"
         Width="800"
         Height="600"
@@ -12,23 +13,47 @@
     
     
     
-    <Grid ColumnDefinitions="*, *, *, 0.5*" RowDefinitions="Auto, 8*, 3*" Margin="16 0 16 0">
+    <Grid ColumnDefinitions="*, *, *, 0.25*" RowDefinitions="Auto, 8*, 3*" Margin="16 0 16 0">
         
-                
-                
-                <ComboBox Grid.Column="0"
-                          Grid.Row="0"
-                          x:Name="Other"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Stretch"
-                          SelectedIndex="0"
-                          Margin="0,16,0,0">
-                    <ComboBoxItem Content="Option 1"/>
-                    <ComboBoxItem Content="Option 2"/>
-                    <ComboBoxItem Content="Option 3"/>
-                    <ComboBoxItem Content="Option 4"/>
-                </ComboBox>    
-                
+        <!--<ComboBox x:Name="PromptList"
+                  Grid.Column="0"
+                  Grid.Row="0"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  SelectedIndex="0"
+                  Margin="0,16,0,0"
+                  SelectionChanged="OnDropDownSelectionChanged">
+
+            <ComboBoxItem Content="Option 1"/>
+            <ComboBoxItem Content="Option 2"/>
+            <ComboBoxItem Content="Option 3"/>
+            <ComboBoxItem Content="Option 4"/>
+
+           
+            <ComboBoxItem Classes="edit-item">
+                <Border Padding="8,6" CornerRadius="4">
+                    <TextBlock Text="Edit config..."
+                               Foreground="#A9B7C6"
+                               VerticalAlignment="Center"/>
+                </Border>
+            </ComboBoxItem>
+        </ComboBox>-->
+        
+        <ComboBox x:Name="PromptList"
+                  Grid.Column="0"
+                  Grid.Row="0"
+                  VerticalAlignment="Top"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,16,0,0"
+                  SelectedIndex="0"
+                  SelectionChanged="OnDropDownSelectionChanged">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="#A9B7C6"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        
 
                 
                 <Label Grid.Column="1"
@@ -78,24 +103,50 @@
                          AcceptsReturn="True"
                          TextWrapping="Wrap"
                          FontSize="16"
-                         Watermark="Нижний TextBox (RowSpan=1)"
+                         Watermark="Ask anything"
                          Margin="0,0,0,16"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"/>
                 
                 <Button Grid.Column="3"
                         Grid.Row="2"
-                        Content=""
                         Width="40"
                         Height="40"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
-                        Margin="0,4,4,0"
+                        Margin="0,8,8,0"
                         Background="#3C3F41"
                         Foreground="White"
                         BorderBrush="Transparent"
                         Cursor="Hand"
-                        Click="OnSendPromptClick"/>
+                        Click="OnSendPromptClick">
+
+                    <Path Width="20"
+                          Height="20"
+                          Stretch="Uniform"
+                          Fill="White"
+                          Data="M2 21 L23 12 L2 3 L2 9 L15 12 L2 15 Z"/>
+                </Button>
+                
+                
+                <!--<Button Grid.Column="3"
+                        Grid.Row="0"
+                        
+                        Margin="8,16,8,0"
+                        Background="#3C3F41"
+                        Foreground="White"
+                        BorderBrush="Transparent"
+                        Cursor="Hand"
+                        Click="OnSendPromptClick">
+
+                    <Path Stretch="Uniform"
+                          Fill="White"
+                          Data="M12 16L8 12H11V4H13V12H16L12 16ZM5 20V18H19V20H5Z"/>
+                </Button>-->
+               
+                
+                
         </Grid>
+    
 </Window>
 
