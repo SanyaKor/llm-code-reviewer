@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="LLMCodeReviewer.RenameWindow"
+        Width="320"
+        Height="120"
+        CanResize="False"
+        Title="Rename File"
+        Background="#2B2D30"
+        Foreground="#E8E8E8"
+        WindowStartupLocation="CenterOwner">
+
+    <Grid RowDefinitions="Auto,Auto,Auto"
+          Margin="8, 0, 8 ,0">
+
+        <TextBlock Text="Enter new name:"
+                   FontSize="14"
+                   Foreground="#A9B7C6" 
+                   Margin="0,8,0,0"/>
+
+        <TextBox x:Name="InputBox"
+                 Grid.Row="1"
+                 FontFamily="JetBrains Mono"
+                 FontSize="14"
+                 Background="#1E1E1E"
+                 BorderBrush="#3C3F41"
+                 Foreground="#E8E8E8"
+                 Margin="0,8,0,0"/>
+
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,8,0,8">
+            <Button Content="Cancel"
+                    Width="80"
+                    Background="#3C3F41"
+                    Click="OnCancelClick"/>
+            <Button Content="OK"
+                    Width="80"
+                    Background="#409EFF"
+                    Click="OnOkClick"/>
+        </StackPanel>
+    </Grid>
+</Window>

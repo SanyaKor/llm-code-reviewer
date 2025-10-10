@@ -10,51 +10,15 @@
           <Geometry x:Key="Icon.Send">
               M2 21 L23 12 L2 3 L2 9 L15 12 L2 15 Z
           </Geometry>
-          <Color x:Key="Color.Panel">#3C3F41</Color>
           <Color x:Key="Color.Background">#2B2B2B</Color>
-          <Color x:Key="Color.Border">#555555</Color>
-          <Color x:Key="Color.BorderWeak">#4B4B4B</Color>
-          <Color x:Key="Color.BorderStrong">#707070</Color>
-
           <Color x:Key="Color.Text">#A9B7C6</Color>
-          <Color x:Key="Color.TextWeak">#8A949E</Color>
-          <Color x:Key="Color.Placeholder">#808080</Color>
-
-          <Color x:Key="Color.Accent">#409EFF</Color>
-          <Color x:Key="Color.AccentHover">#5AAEFD</Color>
-          <Color x:Key="Color.AccentPressed">#2A79CC</Color>
-
-          <Color x:Key="Color.ButtonBg">#3C3F41</Color>
-          <Color x:Key="Color.ButtonBgHover">#4E5052</Color>
-          <Color x:Key="Color.ButtonBgPressed">#2E2E2E</Color>
-
-          <Color x:Key="Color.SelectionBg">#334AAFFF</Color>
-          <Color x:Key="Color.SelectionFg">#FFFFFF</Color>
-
           <SolidColorBrush x:Key="Brush.WindowBg" Color="{StaticResource Color.Background}"/>
-          <SolidColorBrush x:Key="Brush.PanelBg" Color="{StaticResource Color.Panel}"/>
-          <SolidColorBrush x:Key="Brush.Border" Color="{StaticResource Color.Border}"/>
-          <SolidColorBrush x:Key="Brush.BorderWeak" Color="{StaticResource Color.BorderWeak}"/>
-          <SolidColorBrush x:Key="Brush.BorderStrong" Color="{StaticResource Color.BorderStrong}"/>
-
           <SolidColorBrush x:Key="Brush.Text" Color="{StaticResource Color.Text}"/>
-          <SolidColorBrush x:Key="Brush.TextWeak" Color="{StaticResource Color.TextWeak}"/>
-          <SolidColorBrush x:Key="Brush.Placeholder" Color="{StaticResource Color.Placeholder}"/>
-
-          <SolidColorBrush x:Key="Brush.Accent" Color="{StaticResource Color.Accent}"/>
-          <SolidColorBrush x:Key="Brush.AccentHover" Color="{StaticResource Color.AccentHover}"/>
-          <SolidColorBrush x:Key="Brush.AccentPressed" Color="{StaticResource Color.AccentPressed}"/>
-
-          <SolidColorBrush x:Key="Brush.ButtonBg" Color="{StaticResource Color.ButtonBg}"/>
-          <SolidColorBrush x:Key="Brush.ButtonBgHover" Color="{StaticResource Color.ButtonBgHover}"/>
-          <SolidColorBrush x:Key="Brush.ButtonBgPressed" Color="{StaticResource Color.ButtonBgPressed}"/>
-
-          <SolidColorBrush x:Key="Brush.SelectionBg" Color="{StaticResource Color.SelectionBg}"/>
-          <SolidColorBrush x:Key="Brush.SelectionFg" Color="{StaticResource Color.SelectionFg}"/>
       </Application.Resources>
 
       <Application.Styles>
           <StyleInclude Source="avares://Avalonia.Themes.Fluent/FluentTheme.xaml"/>
+          <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
           
           <Style Selector="Window">
               <Setter Property="Background" Value="{StaticResource Brush.WindowBg}"/>
@@ -97,7 +61,7 @@
                 </Setter>
           </Style>
  
-      <!-- ComboBox -->
+            <!-- ComboBox -->
           <Style Selector="ComboBox">
               <Setter Property="Background" Value="#191A1D"/>
               <Setter Property="Foreground" Value="#A9B7C6"/>
@@ -117,6 +81,21 @@
 
           <Style Selector="ComboBox:focus /template/ Border#border">
               <Setter Property="BorderBrush" Value="#409EFF"/>
+          </Style>
+          
+          <Style Selector="ListBoxItem">
+              <Setter Property="Background" Value="#2B2D30"/>
+              <Setter Property="Foreground" Value="#D0D0D0"/>
+          </Style>
+
+          <Style Selector="ListBoxItem:pointerover">
+              <Setter Property="Background" Value="#2E436E"/>  
+              <Setter Property="Foreground" Value="#FFFFFF"/>
+          </Style>
+
+          <Style Selector="ListBoxItem:selected">
+              <Setter Property="Background" Value="#2E436E"/>
+              <Setter Property="Foreground" Value="#FFFFFF"/>
           </Style>
           
   </Application.Styles>

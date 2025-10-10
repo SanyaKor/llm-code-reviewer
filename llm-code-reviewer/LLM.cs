@@ -9,25 +9,57 @@ using System.Threading.Tasks;
 
 namespace LLMCodeReviewer
 {
+    public enum LlmInitError
+    {
+        None,
+        NoApiKey,
+        NoConnection,
+        NetworkError,
+        Unknown
+    }
     public class LLM
     {
-        public string prompt;
-        private readonly HttpClient __httpClient = new();
+        private readonly HttpClient _httpClient = new();
         public string model;
+        public LlmInitError ErrorCode { get; }
+        public bool IsReady => ErrorCode == LlmInitError.None;
+        public string Placeholder { get; }
+        
         public LLM(string model = "")
         {
-            prompt = "";
-            var __apiKey = Environment.GetEnvironmentVariable("OPEN_AI_API_KEY")
-                      ?? throw new InvalidOperationException("Environment variable OPEN_AI_API_KEY not set!");
+            var key = Environment.GetEnvironmentVariable("OPEN_AI_API_KEY");
 
-            this.model = model ?? "gpt-5";
-            
-            __httpClient = new HttpClient
+            if (string.IsNullOrWhiteSpace(key))
             {
-                BaseAddress = new Uri("https://api.openai.com/")
-            };
-            __httpClient.DefaultRequestHeaders.Authorization = 
-                new AuthenticationHeaderValue("Bearer", __apiKey);
+                ErrorCode = LlmInitError.NoApiKey;
+                Placeholder = "OpenAI API key not found.";
+                return;
+            }
+
+            _httpClient = new HttpClient { BaseAddress = new Uri("https://api.openai.com/") };
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", key);
+
+            try
+            {
+                var resp = _httpClient.GetAsync("v1/models").Result;
+                if (!resp.IsSuccessStatusCode)
+                {
+                    ErrorCode = LlmInitError.NoConnection;
+                    Placeholder = "Unable to reach OpenAI servers.";
+                    return;
+                }
+            }
+            catch
+            {
+                ErrorCode = LlmInitError.NetworkError;
+                Placeholder = "Network unavailable.";
+                return;
+            }
+
+            this.model = model;
+            ErrorCode = LlmInitError.None;
+            Placeholder = "";
         }
         
         public async Task<string> AskAsync(string prompt)
@@ -44,7 +76,7 @@ namespace LLMCodeReviewer
             var json = JsonSerializer.Serialize(body);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await __httpClient.PostAsync("v1/chat/completions", content);
+            var response = await _httpClient.PostAsync("v1/chat/completions", content);
             var responseText = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)

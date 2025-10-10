@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ae="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        x:Class="LLMCodeReviewer.AIbot"
+        Title="llm-code-reviewer"
+        Width="400"
+        Height="500"
+        MinWidth="300"
+        MinHeight="350"
+        Background="#2b2d30">
+        
+        
+         <Grid ColumnDefinitions="*" RowDefinitions="3*, *" Margin="16 0 16 0">
+             
+                    
+             
+                <Border Grid.Column="0"
+                        Grid.Row="0"
+                        Background="#191A1D"
+                        BorderBrush="#3C3F41"
+                        BorderThickness="1"
+                        Margin="0,8,0,8"
+                        CornerRadius="4">
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel x:Name="MessagesPanel"
+                                    Margin="8"
+                                    Spacing="8"
+                                    VerticalAlignment="Top"/>
+                    </ScrollViewer>
+                </Border>
+
+                <TextBox Grid.Column="0"
+                         Grid.Row="1"
+                         x:Name="InputBox"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         FontSize="16"
+                         Watermark="Ask anything"
+                         Margin="0,0,0,16"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch"/>
+                
+                <Button Grid.Column="0"
+                        Grid.Row="1"
+                        Width="40"
+                        Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="8"
+                        Background="#3C3F41"
+                        Foreground="White"
+                        BorderBrush="Transparent"
+                        Cursor="Hand"
+                        Click="OnSendPromptClick">
+
+                    <Path Width="20"
+                          Height="20"
+                          Stretch="Uniform"
+                          Fill="White"
+                          Data="M2 21 L23 12 L2 3 L2 9 L15 12 L2 15 Z"/>
+                </Button>
+        
+                
+        </Grid>
+</Window>

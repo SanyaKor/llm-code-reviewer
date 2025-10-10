@@ -20,16 +20,21 @@
             <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
         <PackageReference Include="DotNetEnv" Version="3.1.1" />
         <PackageReference Include="FluentAvalonia.UI.Navigation" Version="11.0.6.3" />
         <PackageReference Include="FluentAvalonia.UI.Windowing" Version="2.0.0-preview5" />
         <PackageReference Include="FluentIcons.Avalonia" Version="1.1.311" />
         <PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.65.0" />
+        <PackageReference Include="TextMateSharp" Version="1.0.70" />
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="TextWindow.axaml">
         <DependentUpon>MainWindow.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="CodeEditor.axaml.cs">
+        <DependentUpon>CodeEditor.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

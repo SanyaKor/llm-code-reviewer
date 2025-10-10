@@ -1,69 +1,34 @@
-using Avalonia.Controls;
-using Avalonia.Interactivity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Avalonia;
-using Avalonia.Input;
-using Avalonia.Media;
-using Avalonia.Layout;
-
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Threading;
-
-
 
 namespace LLMCodeReviewer
 {
-    public partial class MainWindow : Window
+    public partial class AIbot : Window
     {
-        private Button _saveButton;
         private LLM _llm;
-        
-        private TextBox _inputBox;
-        
         private Border? _typingIndicator;
-        private int _lastValidIndex = 0;
-
         private bool _isTyping = false;
-        
-        private List<Prompt> _prompts = new();
-        private List<string> _comboItems = new();
-        
-        public MainWindow()
+        private Border _replyBubble;
+        private TextBox _replyText;
+        public AIbot()
         {
             InitializeComponent();
-            LoadPromptsFromFile();
             _llm = new LLM("gpt-5");
-            _inputBox = InputBox;
-            
         }
         
-        
-        private void LoadPromptsFromFile()
-        {
-            _prompts = PromptStorage.LoadPrompts();
-
-            _comboItems = _prompts.Select(p => p.Title).ToList();
-            _comboItems.Add("Edit config...");
-
-            PromptList.ItemsSource = _comboItems;
-            PromptList.SelectedIndex = 0;
-
-            PromptList.ContainerPrepared += (_, args) =>
-            {
-                if (args.Container.DataContext?.ToString() == "Edit config...")
-                    args.Container.Classes.Add("edit-item");
-            };
-        }
-
         private async void OnSendPromptClick(object? sender, RoutedEventArgs e)
         {
             
-            if (string.IsNullOrWhiteSpace(_inputBox.Text))
+            if (string.IsNullOrWhiteSpace(InputBox.Text))
                 return;
 
-            string messageText = _inputBox.Text;
+            string messageText = InputBox.Text;
 
             var bubble = new Border
             {
@@ -76,14 +41,15 @@ namespace LLMCodeReviewer
                 {
                     Text = messageText,
                     FontSize = 16,
-                    Foreground = new SolidColorBrush(Color.Parse("#A9B7C6")),
                     TextWrapping = TextWrapping.Wrap,
                 }
             };
             
+            
+            
             MessagesPanel.Children.Add(bubble);
             ShowTypingIndicator();
-            _inputBox.Clear();
+            InputBox.Clear();
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -91,10 +57,27 @@ namespace LLMCodeReviewer
                 {
                     scroll.ScrollToEnd();
                 }
-                _inputBox.Focus();
+                InputBox.Focus();
             }, DispatcherPriority.Render);
+
+            var response = "";
             
-            var response = await _llm.AskAsync(messageText);
+            switch (_llm.ErrorCode)
+            {
+                case LlmInitError.NoApiKey:
+                    response = "Error - Please set your OpenAI key first. Note: export API key in env.";
+                    break;
+                case LlmInitError.NoConnection:
+                    response = "Error - OpenAI API is unreachable.";
+                    break;
+                case LlmInitError.NetworkError:
+                    response = "Error - Network problem. Check your connection.";
+                    break;
+                default:
+                    response = await _llm.AskAsync(messageText);
+                    break;
+            }
+            
             HideTypingIndicator();
             
             var replyBubble = new Border
@@ -109,7 +92,7 @@ namespace LLMCodeReviewer
                     Text = response,
                     FontSize = 16,
                     Foreground = new SolidColorBrush(Color.Parse("#A9B7C6")),
-                    Background = Brushes.Transparent,
+                    Background = new SolidColorBrush(Color.Parse("#3C3F41")),
                     BorderThickness = new Thickness(0),
                     IsReadOnly = true,
                     AcceptsReturn = true,
@@ -128,29 +111,6 @@ namespace LLMCodeReviewer
                     scroll.ScrollToEnd();
                 }
             }, DispatcherPriority.Background);
-        }
-        
-        private void __AddMessage(string text, bool fromUser)
-        {
-            var bubble = new Border
-            {
-                Background = new SolidColorBrush(Color.Parse(fromUser ? "#2E3B4E" : "#3C3F41")),
-                CornerRadius = new CornerRadius(12),
-                Padding = new Thickness(10),
-                Margin = fromUser ? new Thickness(80, 4, 0, 4) : new Thickness(0, 4, 80, 4),
-                HorizontalAlignment = fromUser ? HorizontalAlignment.Right : HorizontalAlignment.Left,
-                Child = new TextBlock
-                {
-                    Text = text,
-                    FontSize = 16,
-                    Foreground = Brushes.White,
-                    TextWrapping = TextWrapping.Wrap
-                }
-            };
-
-            MessagesPanel.Children.Add(bubble);
-
-            Dispatcher.UIThread.Post(() => bubble.BringIntoView(), DispatcherPriority.Background);
         }
         
         private async void ShowTypingIndicator()
@@ -200,51 +160,5 @@ namespace LLMCodeReviewer
                 _typingIndicator = null;
             }
         }
-        
-        private void OnDropDownSelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            
-            if (sender is not ComboBox cb) return;
-            
-            if (cb.SelectedItem is not string value) return;
-
-            if (value == "Edit config..." || value == "Edit configs…")
-            {
-                cb.SelectedIndex = 0;          
-                OpenConfigsEditor();
-            }
-        }
-
-        private void OpenConfigsEditor()
-        {
-            var window = new PromptConfig(_prompts, onChanged: () =>
-            {
-                PromptStorage.SavePrompts(_prompts);
-                RefreshComboFromPrompts();
-            });
-            window.Show();
-        }
-        
-        private void RefreshComboFromPrompts()
-        {
-            var titles = _prompts.Select(p => p.Title).ToList();
-            titles.Add("Edit config...");
-
-            PromptList.ItemsSource = null;
-            PromptList.Items.Clear();
-            PromptList.ItemsSource = titles;
-
-            PromptList.SelectedIndex = titles.Count > 1 ? 0 : -1;
-
-            PromptList.ContainerPrepared += (_, a) =>
-            {
-                if (a.Container.DataContext?.ToString() == "Edit config...")
-                    a.Container.Classes.Add("edit-item");
-            };
-        }
-
-        
-        
-
-    }
+    } 
 }
