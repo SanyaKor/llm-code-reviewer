@@ -67,10 +67,10 @@ Consider simplifying logic in DataParser.cs → Split nested loops into helper m
 
 Here’s how the **LLM Bot** window looks in the app:
 
-<p align="center">
+<p align="left">
   <img src="/assets/aibot.png" alt="AI Bot Preview" width="50%">
 </p>
----
+
 
 ## 📦 Notes
 

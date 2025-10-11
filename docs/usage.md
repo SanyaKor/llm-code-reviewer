@@ -53,7 +53,7 @@ It provides:
 - Diff summarization and issue detection  
 - Context-aware insights for refactoring  
 
-📄 See more: [LLM Commands & Bot Usage →](docs/llm-commands.md)
+📄 See more: [LLM Commands & Bot Usage →](llm-commands.md)
 
 
 ## 🖥️ Editor Preview
