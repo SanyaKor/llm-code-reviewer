@@ -7,11 +7,11 @@ To use the **AI Bot**, you must have:
 - Internet connection
 - API key set in your environment:
   ```bash
-  export OPENAI_API_KEY="your_api_key_here"
+  export OPEN_AI_API_KEY="your_api_key_here"
   ```
   or on Windows PowerShell:
   ```powershell
-  setx OPENAI_API_KEY "your_api_key_here"
+  setx OPEN_AI_API_KEY "your_api_key_here"
   ```
 
 The bot uses **GPT-5** for intelligent code reasoning and diff analysis.  
