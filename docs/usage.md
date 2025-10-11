@@ -62,8 +62,6 @@ Below is an example of the code editor interface with syntax highlighting enable
 
 ![Editor Preview](/assets/editor.png)
 
-*(You can replace this image with your own screenshot stored in `/assets/`.)*
-
 ---
 
 ✅ **That’s it!**  
