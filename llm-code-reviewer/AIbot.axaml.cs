@@ -34,8 +34,8 @@ namespace LLMCodeReviewer
             if (string.IsNullOrWhiteSpace(InputBox.Text))
                 return;
 
-            string messageText = InputBox.Text;
-
+            string messageText = _promptDiffAnalyzer;
+            
             var bubble = new Border
             {
                 Background = new SolidColorBrush(Color.Parse("#2A2B2E")),

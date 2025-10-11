@@ -72,35 +72,82 @@ namespace LLMCodeReviewer
         }
         
 
-        private string AnalyzeChanges()
+        private string AnalyzeChanges_1()
         {
-            string prompt = "";
+            string prompt = """
+                            Analyze the following diffs from source files.
+
+                            Each diff block follows this structure:
+
+                            ──────────────────────────────
+                            updated: <filename>
+                            - {line number}: <old line>
+                            + {line number}: <new line>
+                            ──────────────────────────────
+                            deleted: <filename>
+                            - <old line>
+                            ──────────────────────────────
+                            added: <filename>
+                            + <new line>
+                            ──────────────────────────────
+                            renamed: <old_filename> -> <new_filename>
+                            ──────────────────────────────
+
+                            Rules:
+                            1. “updated” — file existed before and was modified.
+                            2. “deleted” — file was removed completely.
+                            3. “added” — new file was added.
+                            4. Lines starting with “-” show removed or replaced code (old version).
+                            5. Lines starting with “+” show newly added or changed code (new version).
+                            6. Line numbers indicate original or new line positions in the file.
+
+                            Your task:
+                            - For each file, describe what changed and why.
+                            - Identify specific logic or syntax modifications.
+                            - Summarize the intent of the edit (bug fix, refactor, feature, etc.).
+                            - Keep your explanation structured per file.
+                            """;
             
             foreach (var oldScript in _initialScripts)
             {
                 var updated = _scripts.FirstOrDefault(s => s.Id == oldScript.Id);
                 if (updated is null)
                 {
-                    prompt += "DELETED SCRIPT:\n";
-                    prompt += $"SCRIPT NAME:{oldScript.Content}\n";
-                    prompt += $"SCRIPT CONTENT:\n{oldScript.Content}\n";
+                    prompt += $"deleted: {oldScript.Title}\n";
+                    string[] oldLines = oldScript.Content.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
                     
+                    foreach (var s in oldLines)
+                        if (!string.IsNullOrWhiteSpace(s))
+                            prompt += $"- {s}\n";
+
                     continue;
                 }
 
                 if (!string.Equals(oldScript.Content, updated.Content, StringComparison.Ordinal))
                 {
-                    prompt += "CHANGED CONTENT IN SCRIPT:\n";
-                    prompt += $"SCRIPT NAME:{updated.Title}\n";
-                    prompt += $"SCRIPT OLD CONTENT:\n{updated.Content}\n";
-                    prompt += $"SCRIPT NEW CONTENT:\n{oldScript.Content}\n";
-                }
+                    if (!string.Equals(oldScript.Title, updated.Title, StringComparison.Ordinal))
+                        prompt += $"renamed: {oldScript.Title} -> {updated.Title}\n";
 
-                if (!string.Equals(oldScript.Title, updated.Title, StringComparison.Ordinal))
-                {
-                    prompt += "RENAMED SCRIPT:\n";
-                    prompt += $"SCRIPT OLD NAME:{oldScript.Title}\n";
-                    prompt += $"SCRIPT NEW NAME:{updated.Title}\n";
+                    prompt += $"updated: {updated.Title}\n";
+                    
+                    string[] oldLines = oldScript.Content.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                    string[] newLines = updated.Content.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+
+                    int max = Math.Max(oldLines.Length, newLines.Length);
+
+                    for (int i = 0; i < max; i++)
+                    {
+                        string? oldLine = i < oldLines.Length ? oldLines[i] : null;
+                        string? newLine = i < newLines.Length ? newLines[i] : null;
+
+                        if (!string.Equals(oldLine, newLine, StringComparison.Ordinal))
+                        {
+                            if (!string.IsNullOrWhiteSpace(oldLine))
+                                prompt += $"- {i}:{oldLine}\n";
+                            if (!string.IsNullOrWhiteSpace(newLine))
+                                prompt += $"+ {i}:{newLine}\n";
+                        }
+                    }
                 }
             }
             
@@ -108,9 +155,86 @@ namespace LLMCodeReviewer
             {
                 if (_initialScripts.All(s => s.Id != updated.Id))
                 {
-                    prompt += "ADDED A NEW SCRIPT:\n";
-                    prompt += $"SCRIPT OLD NAME:{updated.Content}\n";
-                    prompt += $"SCRIPT NEW CONTENT:\n{updated.Title}\n";
+                    prompt += $"added: {updated.Title}\n";
+                    string[] updatedLines = updated.Content.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+
+                    foreach (var s in updatedLines)
+                        if (!string.IsNullOrWhiteSpace(s))
+                            prompt += $"+ {s}\n";
+
+                }
+            }
+            
+            return prompt;
+        }
+        
+        
+        private string AnalyzeChanges_2()
+        {
+            string prompt = """
+                            Analyze the following diffs from files.
+
+                            Each diff follows this structure:
+
+                            ──────────────────────────────
+                            updated: <filename>
+                            - old_script:
+                            <old content>
+                            + new_script:
+                            <new content>
+                            ──────────────────────────────
+                            deleted: <filename>
+                            - old_script:
+                            <old content>
+                            ──────────────────────────────
+                            added: <filename>
+                            + new_script:
+                            <new content>
+                            ──────────────────────────────
+                            renamed: <old_filename> -> <new_filename>
+                            ──────────────────────────────
+
+                            Rules:
+                            1. “updated” means the file existed before and was modified.
+                            2. “deleted” means the file was removed.
+                            3. “added” means a new file was added.
+                            4. Lines starting with “-” indicate removed or old code.
+                            5. Lines starting with “+” indicate new or added code.
+
+                            Your task:
+                            - For each file section, describe what changed and why.
+                            - Summarize the purpose or intention behind modifications.
+                            - Identify potential issues, mistakes, or improvements.
+                            - Keep your response structured by file name.;
+                            """;
+            
+            foreach (var oldScript in _initialScripts)
+            {
+                var updated = _scripts.FirstOrDefault(s => s.Id == oldScript.Id);
+                if (updated is null)
+                {
+                    prompt += $"deleted: {oldScript.Title}\n";
+                    prompt += $"- old_script:\n{oldScript.Content}\n";
+                    continue;
+                }
+
+                if (!string.Equals(oldScript.Content, updated.Content, StringComparison.Ordinal))
+                {
+                    if (!string.Equals(oldScript.Title, updated.Title, StringComparison.Ordinal))
+                        prompt += $"renamed: {oldScript.Title} -> {updated.Title}\n";
+
+                    prompt += $"updated: {updated.Title}\n";
+                    prompt += $"- old_script:\n{oldScript.Content}\n";
+                    prompt += $"+ new_script:\n{updated.Content}\n";
+                }
+            }
+            
+            foreach (var updated in _scripts)
+            {
+                if (_initialScripts.All(s => s.Id != updated.Id))
+                {
+                    prompt += $"added: {updated.Title}\n";
+                    prompt += $"+ new_script:\n{updated.Content}\n";
                 }
             }
             
@@ -128,11 +252,7 @@ namespace LLMCodeReviewer
         private void LoadScriptsFromDisk()
         {
             _scripts = ScriptStorage.LoadScripts();
-            Console.WriteLine("------");
-            foreach (var s in  _scripts)
-            {
-                Console.WriteLine(s.Id);
-            }
+            
             var comboItems = _scripts.Select(p => p.Title).ToList();
 
             FilesList.ItemsSource = comboItems;
@@ -227,8 +347,6 @@ namespace LLMCodeReviewer
             FilesList.ItemsSource = null;
             FilesList.Items.Clear();
             LoadScriptsFromDisk();
-            
-            
         }
 
       
@@ -262,13 +380,11 @@ namespace LLMCodeReviewer
 
             Editor.Text = p.Content;
         }
-
         private void ApplySyntaxByExtension(string fileName)
         {
             var ext = Path.GetExtension(fileName)?.ToLowerInvariant() ?? ".txt";
             SetGrammarByExtension(ext);
         }
-
         private void SetGrammarByExtension(string ext)
         {
             var resolvedExt = ext switch
@@ -301,7 +417,6 @@ namespace LLMCodeReviewer
                 _currentScope = scope;
             }
         }
-
         private static string InjectFileName(string fileName)
         {
             string ext = Path.GetExtension(fileName);
@@ -321,7 +436,6 @@ namespace LLMCodeReviewer
 
             return name + ext;
         }
-
         private string GenerateUniqueTitle(string baseTitle = "New script")
         {
             string baseSanitized = InjectFileName(baseTitle);
@@ -345,8 +459,6 @@ namespace LLMCodeReviewer
 
             return candidate;
         }
-
-       
         private void OnWindowClosed(object? sender, EventArgs e)
         {
             if (FilesList.SelectedItem is not string currentTitle)
@@ -366,7 +478,7 @@ namespace LLMCodeReviewer
         private async void OnBotCLick(object? sender, RoutedEventArgs e)
         {
             SaveFile();
-            string prompt = AnalyzeChanges();
+            string prompt = AnalyzeChanges_2();
             
             
             if (_botWindow is { IsVisible: true })
