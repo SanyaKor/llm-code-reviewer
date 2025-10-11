@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -16,9 +17,14 @@ namespace LLMCodeReviewer
         private bool _isTyping = false;
         private Border _replyBubble;
         private TextBox _replyText;
-        public AIbot()
+        private string _promptDiffAnalyzer;
+        
+        public AIbot(string promptDiffAnalyzer)
         {
+            _promptDiffAnalyzer = promptDiffAnalyzer;
             InitializeComponent();
+            
+            Console.WriteLine(_promptDiffAnalyzer);
             _llm = new LLM("gpt-5");
         }
         
@@ -39,7 +45,7 @@ namespace LLMCodeReviewer
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Child = new TextBlock
                 {
-                    Text = messageText,
+                    Text = _promptDiffAnalyzer,
                     FontSize = 16,
                     TextWrapping = TextWrapping.Wrap,
                 }

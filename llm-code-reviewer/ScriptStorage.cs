@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LLMCodeReviewer
 {
@@ -21,7 +22,8 @@ namespace LLMCodeReviewer
                 {
                     var defaultScripts = new List<Script>
                     {
-                        new() { Title = "Default Csharp Script.cs", 
+                        new() {
+                            Title = "Default Csharp Script.cs", 
                             Content = """
                                       using System;
                                       using System.Linq;
@@ -156,5 +158,26 @@ namespace LLMCodeReviewer
     {
         public string Title { get; set; } = "";
         public string Content { get; set; } = "";
+        
+        public string Id  { get; private set; }
+        
+        
+        public Script()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+        public Script(Script other)
+        {
+            Id = other.Id;
+            Title = other.Title;
+            Content = other.Content;
+        }
+        [JsonConstructor]
+        public Script(string title, string content, string id)
+        {
+            Title = title;
+            Content = content;
+            Id = id ?? Guid.NewGuid().ToString();
+        }
     }
 }

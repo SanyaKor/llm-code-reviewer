@@ -22,6 +22,8 @@ namespace LLMCodeReviewer
 
         private TextMate.Installation? _textMate;
         private List<Script> _scripts = new();
+        private List<Script> _initialScripts;
+
         
         private RegistryOptions _registry;
         private TextMate.Installation _tm;
@@ -30,9 +32,11 @@ namespace LLMCodeReviewer
         private Script _currScript = new();
         private bool _contentChanged;
         
-        private const double MinFont = 10.0;
-        private const double MaxFont = 28.0;
-        private const double StepFont = 1.0;
+        private const double _minFont = 10.0;
+        private const double _maxFont = 28.0;
+        private const double _stepFont = 1.0;
+        
+        private AIbot? _botWindow;
         
         public CodeEditor()
         {
@@ -40,6 +44,9 @@ namespace LLMCodeReviewer
             LoadEditorConfig();
             LoadScriptsFromDisk();
 
+            _initialScripts = _scripts.Select(s => new Script(s)).ToList();
+            
+            
             Editor.TextChanged += (_, __) => _contentChanged = true;
             this.KeyDown += (_, e) =>
             {
@@ -64,6 +71,52 @@ namespace LLMCodeReviewer
             this.Closed += OnWindowClosed;
         }
         
+
+        private string AnalyzeChanges()
+        {
+            string prompt = "";
+            
+            foreach (var oldScript in _initialScripts)
+            {
+                var updated = _scripts.FirstOrDefault(s => s.Id == oldScript.Id);
+                if (updated is null)
+                {
+                    prompt += "DELETED SCRIPT:\n";
+                    prompt += $"SCRIPT NAME:{oldScript.Content}\n";
+                    prompt += $"SCRIPT CONTENT:\n{oldScript.Content}\n";
+                    
+                    continue;
+                }
+
+                if (!string.Equals(oldScript.Content, updated.Content, StringComparison.Ordinal))
+                {
+                    prompt += "CHANGED CONTENT IN SCRIPT:\n";
+                    prompt += $"SCRIPT NAME:{updated.Title}\n";
+                    prompt += $"SCRIPT OLD CONTENT:\n{updated.Content}\n";
+                    prompt += $"SCRIPT NEW CONTENT:\n{oldScript.Content}\n";
+                }
+
+                if (!string.Equals(oldScript.Title, updated.Title, StringComparison.Ordinal))
+                {
+                    prompt += "RENAMED SCRIPT:\n";
+                    prompt += $"SCRIPT OLD NAME:{oldScript.Title}\n";
+                    prompt += $"SCRIPT NEW NAME:{updated.Title}\n";
+                }
+            }
+            
+            foreach (var updated in _scripts)
+            {
+                if (_initialScripts.All(s => s.Id != updated.Id))
+                {
+                    prompt += "ADDED A NEW SCRIPT:\n";
+                    prompt += $"SCRIPT OLD NAME:{updated.Content}\n";
+                    prompt += $"SCRIPT NEW CONTENT:\n{updated.Title}\n";
+                }
+            }
+            
+            return prompt;
+        }
+        
         private void LoadEditorConfig()
         {
             var editor = this.FindControl<TextEditor>("Editor");
@@ -75,7 +128,11 @@ namespace LLMCodeReviewer
         private void LoadScriptsFromDisk()
         {
             _scripts = ScriptStorage.LoadScripts();
-
+            Console.WriteLine("------");
+            foreach (var s in  _scripts)
+            {
+                Console.WriteLine(s.Id);
+            }
             var comboItems = _scripts.Select(p => p.Title).ToList();
 
             FilesList.ItemsSource = comboItems;
@@ -170,6 +227,8 @@ namespace LLMCodeReviewer
             FilesList.ItemsSource = null;
             FilesList.Items.Clear();
             LoadScriptsFromDisk();
+            
+            
         }
 
       
@@ -302,23 +361,36 @@ namespace LLMCodeReviewer
             current.Content = Editor.Text ?? string.Empty;
 
             ScriptStorage.SaveScripts(_scripts);
-
         }
 
-        private void OnBotCLick(object? sender, RoutedEventArgs e)
+        private async void OnBotCLick(object? sender, RoutedEventArgs e)
         {
-            var wnd = new AIbot();
-            wnd.Show(this);
+            SaveFile();
+            string prompt = AnalyzeChanges();
+            
+            
+            if (_botWindow is { IsVisible: true })
+            {
+                _botWindow.Activate();
+                return;
+            }
+
+            _botWindow = new AIbot(prompt)
+            {
+                DataContext = this,
+                Topmost = false,
+                ShowInTaskbar = true
+            };
+            _botWindow.Closed += (_, _) => _botWindow = null;
+
+            _botWindow.Show();
         }
-
         private void OnExitClick(object? sender, RoutedEventArgs e) => Close();
-
         private void OnToggleWrapClick(object? sender, RoutedEventArgs e)
         {
             _wrap = !_wrap;
             Editor.WordWrap = _wrap;
         }
-        
         private async void OnRenameClick(object? sender, RoutedEventArgs e)
         {
             if (FilesList.SelectedItem is not string title)
@@ -339,16 +411,14 @@ namespace LLMCodeReviewer
             FilesList.ItemsSource = _scripts.Select(s => s.Title).ToList();
             FilesList.SelectedItem = result;
         }
-        
         private void ApplyFontSize(double size)
         {
-            var s = Math.Clamp(size, MinFont, MaxFont);
+            var s = Math.Clamp(size, _minFont, _maxFont);
             Editor.FontSize = s;
             Editor.TextArea.TextView.Redraw();
         }
-
-        private void ZoomIn()  => ApplyFontSize(Editor.FontSize + StepFont);
-        private void ZoomOut() => ApplyFontSize(Editor.FontSize - StepFont);
+        private void ZoomIn()  => ApplyFontSize(Editor.FontSize + _stepFont);
+        private void ZoomOut() => ApplyFontSize(Editor.FontSize - _stepFont);
         private void ZoomReset()=> ApplyFontSize(14.0); 
         
     }
