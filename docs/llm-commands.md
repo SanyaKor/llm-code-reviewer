@@ -35,13 +35,13 @@ Magic commands are prefixed with `%` and trigger advanced AI-powered actions.
 
 | Command | Description |
 |----------|--------------|
-| `%analyze changes` | Analyze all current code changes and explain what was modified and why |
+| `%analyze diffs` | Analyze all current code changes and explain what was modified and why |
 | `%suggest fixes` | Suggest possible fixes and improvements for the modified files |
 | `%show deleted` | Display a summary of all deleted files or code sections |
 
 Example usage:
 ```
-%analyze changes
+%analyze diffs
 ```
 
 ---
@@ -67,8 +67,9 @@ Consider simplifying logic in DataParser.cs → Split nested loops into helper m
 
 Here’s how the **LLM Bot** window looks in the app:
 
-![AI Bot Preview](/assets/aibot.png)
-
+<p align="center">
+  <img src="/assets/aibot.png" alt="AI Bot Preview" width="50%">
+</p>
 ---
 
 ## 📦 Notes
