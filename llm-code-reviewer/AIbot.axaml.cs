@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,15 +18,95 @@ namespace LLMCodeReviewer
         private bool _isTyping = false;
         private Border _replyBubble;
         private TextBox _replyText;
-        private string _promptDiffAnalyzer;
+        private Dictionary<string, string> _diffData;
         
-        public AIbot(string promptDiffAnalyzer)
+        public AIbot(Dictionary<string, string> diffData)
         {
-            _promptDiffAnalyzer = promptDiffAnalyzer;
+            _diffData = diffData;
             InitializeComponent();
-            
-            Console.WriteLine(_promptDiffAnalyzer);
             _llm = new LLM("gpt-5");
+        }
+
+        private string MagicCommands(string command)
+        {
+            string prompt = "";
+            
+            switch (command)
+            {
+                case "%analyze diffs":
+                {
+                    prompt += (
+                        _diffData["prompt"] +
+                        _diffData["added"] +
+                        _diffData["deleted"] +
+                        _diffData["renamed"] +
+                        _diffData["changed"]);
+
+                    prompt += ("""    
+                               Your task:
+                               - For each file section, describe what changed and why.
+                               - Summarize the purpose or intention behind modifications.
+                               - Identify potential issues, mistakes, or improvements.
+                               - Keep your response structured by file name.
+                               """);
+                    break;
+                }
+                case "%summarize changes":
+                {
+                    prompt += (
+                        _diffData["prompt"] +
+                        _diffData["added"] +
+                        _diffData["deleted"] +
+                        _diffData["renamed"] +
+                        _diffData["changed"]);
+
+                    prompt += ("""    
+                               Your task:
+                               - Summarize all code changes in one concise overview.
+                               - Group by file name and describe the general purpose of each change.
+                               - Omit implementation details; focus on intent.
+                               - Use short bullet points per file.
+                               """);
+                    break;
+                }
+                case "%suggest fixes":
+                {
+                    prompt += (
+                        _diffData["prompt"] +
+                        _diffData["added"] +
+                        _diffData["deleted"] +
+                        _diffData["renamed"] +
+                        _diffData["changed"]);
+
+                    prompt += ("""    
+                               Your task:
+                               - Inspect the code changes for potential errors, logic flaws, or unsafe constructs.
+                               - Propose minimal and practical fixes.
+                               - Suggest ways to improve code style, naming, and clarity.
+                               - Keep explanations clear and actionable.
+                               """);
+                    break;
+                }
+                case "%show deleted":
+                {
+                    prompt += (
+                        _diffData["prompt"] +
+                        _diffData["deleted"]);
+                        
+                    prompt += ("""    
+                               Your task:
+                               - Identify all deleted files.
+                               - Explain the possible reason for removal (redundant, merged, replaced, etc.).
+                               - Note if their functionality appears to have been moved or rewritten elsewhere.
+                               """);
+                    break;
+                }
+                default:
+                    prompt = command;
+                    break;
+            }
+
+            return prompt;
         }
         
         private async void OnSendPromptClick(object? sender, RoutedEventArgs e)
@@ -33,8 +114,8 @@ namespace LLMCodeReviewer
             
             if (string.IsNullOrWhiteSpace(InputBox.Text))
                 return;
-
-            string messageText = _promptDiffAnalyzer;
+            
+            string messageText = MagicCommands(InputBox.Text);
             
             var bubble = new Border
             {
@@ -45,7 +126,7 @@ namespace LLMCodeReviewer
                 HorizontalAlignment = HorizontalAlignment.Right,
                 Child = new TextBlock
                 {
-                    Text = _promptDiffAnalyzer,
+                    Text = messageText,
                     FontSize = 16,
                     TextWrapping = TextWrapping.Wrap,
                 }

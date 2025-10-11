@@ -169,7 +169,7 @@ namespace LLMCodeReviewer
         }
         
         
-        private string AnalyzeChanges_2()
+        private Dictionary<string, string> AnalyzeChanges_2()
         {
             string prompt = """
                             Analyze the following diffs from files.
@@ -201,31 +201,32 @@ namespace LLMCodeReviewer
                             4. Lines starting with “-” indicate removed or old code.
                             5. Lines starting with “+” indicate new or added code.
 
-                            Your task:
-                            - For each file section, describe what changed and why.
-                            - Summarize the purpose or intention behind modifications.
-                            - Identify potential issues, mistakes, or improvements.
-                            - Keep your response structured by file name.;
                             """;
+            
+            
+            string additions = "";
+            string deletions = "";
+            string renamed = "";
+            string changed = "";
             
             foreach (var oldScript in _initialScripts)
             {
                 var updated = _scripts.FirstOrDefault(s => s.Id == oldScript.Id);
                 if (updated is null)
                 {
-                    prompt += $"deleted: {oldScript.Title}\n";
-                    prompt += $"- old_script:\n{oldScript.Content}\n";
+                    deletions += $"deleted: {oldScript.Title}\n";
+                    deletions += $"- old_script:\n{oldScript.Content}\n";
                     continue;
                 }
 
                 if (!string.Equals(oldScript.Content, updated.Content, StringComparison.Ordinal))
                 {
                     if (!string.Equals(oldScript.Title, updated.Title, StringComparison.Ordinal))
-                        prompt += $"renamed: {oldScript.Title} -> {updated.Title}\n";
+                        renamed += $"renamed: {oldScript.Title} -> {updated.Title}\n";
 
-                    prompt += $"updated: {updated.Title}\n";
-                    prompt += $"- old_script:\n{oldScript.Content}\n";
-                    prompt += $"+ new_script:\n{updated.Content}\n";
+                    changed += $"updated: {updated.Title}\n";
+                    changed += $"- old_script:\n{oldScript.Content}\n";
+                    changed += $"+ new_script:\n{updated.Content}\n";
                 }
             }
             
@@ -233,12 +234,19 @@ namespace LLMCodeReviewer
             {
                 if (_initialScripts.All(s => s.Id != updated.Id))
                 {
-                    prompt += $"added: {updated.Title}\n";
-                    prompt += $"+ new_script:\n{updated.Content}\n";
+                    additions += $"added: {updated.Title}\n";
+                    additions += $"+ new_script:\n{updated.Content}\n";
                 }
             }
             
-            return prompt;
+            return new Dictionary<string, string>
+            {
+                ["prompt"] = prompt,
+                ["added"]   = additions,
+                ["deleted"] = deletions,
+                ["renamed"] = renamed,
+                ["changed"] = changed
+            };
         }
         
         private void LoadEditorConfig()
@@ -478,7 +486,7 @@ namespace LLMCodeReviewer
         private async void OnBotCLick(object? sender, RoutedEventArgs e)
         {
             SaveFile();
-            string prompt = AnalyzeChanges_2();
+            Dictionary<string, string> data = AnalyzeChanges_2();
             
             
             if (_botWindow is { IsVisible: true })
@@ -487,7 +495,7 @@ namespace LLMCodeReviewer
                 return;
             }
 
-            _botWindow = new AIbot(prompt)
+            _botWindow = new AIbot(data)
             {
                 DataContext = this,
                 Topmost = false,
