@@ -1,10 +1,9 @@
-e# ⚙️ Build & Run Guide
+⚙️ Build & Run Guide
 
 ## 🔹 1️⃣ Requirements
 
 - [.NET 9 SDK](https://dotnet.microsoft.com/download)
-- Internet connection (for NuGet restore)
-- (Optional) [Git](https://git-scm.com/)
+- (Optional) [OPEN AI API KEY]
 
 Check SDK version:
 ```bash
@@ -16,7 +15,7 @@ dotnet --version
 ## 🔹 2️⃣ Clone & Restore
 
 ```bash
-git clone https://github.com/yourusername/llm-code-reviewer.git
+git clone https://github.com/SanyaKor/llm-code-reviewer.git
 cd llm-code-reviewer
 dotnet restore
 ```
