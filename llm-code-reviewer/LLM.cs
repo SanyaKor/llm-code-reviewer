@@ -53,7 +53,7 @@ namespace LLMCodeReviewer
             catch
             {
                 ErrorCode = LlmInitError.NetworkError;
-                Placeholder = "Network unavailable.";
+                Placeholder = "fNetwork unavailable.";
                 return;
             }
 

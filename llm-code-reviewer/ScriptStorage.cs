@@ -22,8 +22,9 @@ namespace LLMCodeReviewer
                 {
                     var defaultScripts = new List<Script>
                     {
-                        new() {
-                            Title = "Default Csharp Script.cs", 
+                        new()
+                        {
+                            Title = "Default Csharp Script.cs",
                             Content = """
                                       using System;
                                       using System.Linq;
@@ -40,48 +41,53 @@ namespace LLMCodeReviewer
                                               }
                                           }
                                       }
-                                      """ },
-                        new() { Title = "Default Python Script.py", 
+                                      """
+                        },
+                        new()
+                        {
+                            Title = "Default Python Script.py",
                             Content = """"
                                       class Greeter:
                                           def __init__(self, name):
                                               self.name = name
-                                  
+
                                           def greet(self):
                                               print(f"Hello, {self.name}!")
-                                  
+
                                       if __name__ == "__main__":
                                           g = Greeter("World")
                                           g.greet()
-                                  
+
                                       """"
-                            },
-                        new() { Title = "Default Html Script.html", 
+                        },
+                        new()
+                        {
+                            Title = "Default Html Script.html",
                             Content = """
-                                          <!DOCTYPE html>
-                                          <html lang="en">
-                                          <head>
-                                              <meta charset="UTF-8">
-                                              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                                              <title>Hello HTML</title>
-                                              <style>
-                                                  body {
-                                                      background-color: #1e1e1e;
-                                                      color: #e8e8e8;
-                                                      font-family: Arial, sans-serif;
-                                                      display: flex;
-                                                      justify-content: center;
-                                                      align-items: center;
-                                                      height: 100vh;
-                                                  }
-                                                  h1 { color: #409EFF; }
-                                              </style>
-                                          </head>
-                                          <body>
-                                              <h1>Hello, World!</h1>
-                                          </body>
-                                          </html>
-                                          """
+                                      <!DOCTYPE html>
+                                      <html lang="en">
+                                      <head>
+                                          <meta charset="UTF-8">
+                                          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                          <title>Hello HTML</title>
+                                          <style>
+                                              body {
+                                                  background-color: #1e1e1e;
+                                                  color: #e8e8e8;
+                                                  font-family: Arial, sans-serif;
+                                                  display: flex;
+                                                  justify-content: center;
+                                                  align-items: center;
+                                                  height: 100vh;
+                                              }
+                                              h1 { color: #409EFF; }
+                                          </style>
+                                      </head>
+                                      <body>
+                                          <h1>Hello, World!</h1>
+                                      </body>
+                                      </html>
+                                      """
                         },
                         new()
                         {
@@ -147,13 +153,37 @@ namespace LLMCodeReviewer
                 Console.WriteLine($"[ERROR] Failed to save scripts: {ex.Message}");
             }
         }
+
         public static void RemoveScript(string title)
         {
             var scripts = LoadScripts();
             scripts.RemoveAll(p => p.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
             SaveScripts(scripts);
         }
+
+        public static void ClearScriptsDirectory()
+        {
+            try
+            {
+                var dir = Path.GetDirectoryName(FilePath);
+                if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir))
+                {
+                    Console.WriteLine("[INFO] Scripts directory does not exist — nothing to clear.");
+                    return;
+                }
+
+                foreach (var file in Directory.GetFiles(dir))
+                {
+                    File.Delete(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Failed to clear scripts directory: {ex.Message}");
+            }
+        }
     }
+
     public class Script
     {
         public string Title { get; set; } = "";

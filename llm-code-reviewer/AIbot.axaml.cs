@@ -152,7 +152,7 @@ namespace LLMCodeReviewer
             switch (_llm.ErrorCode)
             {
                 case LlmInitError.NoApiKey:
-                    response = "Error - Please set your OpenAI key first. Note: export API key in env.";
+                    response = "Error - Please set your OpenAI key first. Note: export API key in env(OPEN_AI_API_KEY).";
                     break;
                 case LlmInitError.NoConnection:
                     response = "Error - OpenAI API is unreachable.";

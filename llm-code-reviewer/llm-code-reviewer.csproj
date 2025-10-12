@@ -1,40 +1,37 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <RootNamespace>AvaloniaApplication1</RootNamespace>
-    </PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <RootNamespace>AvaloniaApplication1</RootNamespace>
+    <OutputType>WinExe</OutputType>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.3.6" />
-        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.3.6" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.6" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.6">
-            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
-        <PackageReference Include="DotNetEnv" Version="3.1.1" />
-        <PackageReference Include="FluentAvalonia.UI.Navigation" Version="11.0.6.3" />
-        <PackageReference Include="FluentAvalonia.UI.Windowing" Version="2.0.0-preview5" />
-        <PackageReference Include="FluentIcons.Avalonia" Version="1.1.311" />
-        <PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.65.0" />
-        <PackageReference Include="TextMateSharp" Version="1.0.70" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.6" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.6" />
+    <!-- В релизе убираем Diagnostics из вывода -->
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.6">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="FluentAvalonia.UI.Navigation" Version="11.0.6.3" />
+    <PackageReference Include="FluentAvalonia.UI.Windowing" Version="2.0.0-preview5" />
+    <PackageReference Include="FluentIcons.Avalonia" Version="1.1.311" />
+    <PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.65.0" />
+    <PackageReference Include="TextMateSharp" Version="1.0.70" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="TextWindow.axaml">
-        <DependentUpon>MainWindow.axaml</DependentUpon>
-      </Compile>
-      <Compile Update="CodeEditor.axaml.cs">
-        <DependentUpon>CodeEditor.axaml</DependentUpon>
-      </Compile>
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Update="CodeEditor.axaml.cs">
+      <DependentUpon>CodeEditor.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>
