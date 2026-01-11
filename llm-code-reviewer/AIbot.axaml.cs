@@ -28,6 +28,7 @@ namespace LLMCodeReviewer
         }
         private sometest(){
             int a;
+            int b;
         }
 
         private string MagicCommands(string command)
