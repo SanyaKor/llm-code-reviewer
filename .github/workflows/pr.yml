@@ -1,0 +1,23 @@
+name: PR Automation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
+jobs:
+  bot:
+    name: Run Super Bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post PR comment
+        uses: SanyaKor/CommitGuard@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_PAT: ${{ secrets.GH_PAT }}
