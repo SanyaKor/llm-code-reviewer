@@ -26,6 +26,9 @@ namespace LLMCodeReviewer
             InitializeComponent();
             _llm = new LLM("gpt-5");
         }
+        private sometest(){
+            int a;
+        }
 
         private string MagicCommands(string command)
         {
